@@ -1,0 +1,23 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    {% load static %}
+    <div class="row justify-content-center">
+        <form method="POST" action="{% url 'newpost' %}">
+            {% csrf_token %}
+            <div>Hey {{ username }}, here you can create a <h2>New Post</h2></div><br>
+            <input type="hidden" name="user" value="{{ username }}">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" class="form-control" name="title" minlength="3">
+            </div>
+            <div class="form-group">
+              <label for="content">Content</label>
+              <textarea class="form-control" name="content" rows="3" minlength="10"></textarea>
+            </div>
+            <div class="input-group-append">
+                <input type="submit" value="Publish" class="btn btn-primary">
+            </div>
+          </form>
+    </div>
+{% endblock %}
