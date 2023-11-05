@@ -9,6 +9,8 @@ from datetime import datetime
 import json
 from django.core.paginator import Paginator
 from django.shortcuts import render
+import logging
+
 
 
 from .models import User, Post, PostLikes, Follow
@@ -26,7 +28,10 @@ def index(request):
                 liked_posts.append(post.id)
         except PostLikes.DoesNotExist:
             pass        
-        
+
+    
+    if not liked_posts:
+        liked_posts = 0 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_posts = paginator.get_page(page_number)
@@ -246,11 +251,17 @@ def followingPosts(request):
 
     for user in followedUsers:
         try:
-            posts = Post.objects.all().filter(user=user.following)
-            filteredPosts.append(posts)
-        except PostLikes.DoesNotExist:
+            posts = Post.objects.filter(user=user.following)
+            if len(posts) > 1:
+                for post in posts:
+                    filteredPosts.append(post)
+            else:
+                if posts:
+                    filteredPosts.append(posts)
+        except Post.DoesNotExist:
             pass     
-
+    if not filteredPosts:
+        filteredPosts = 0
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_posts = paginator.get_page(page_number)
